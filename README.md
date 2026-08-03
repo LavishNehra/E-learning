@@ -351,8 +351,8 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 
 **Kunal Singh** - Project Lead & Full-Stack Developer
 
-- **Email**: [shrii.kunal@gmail.com](mailto:shrii.kunal@gmail.com)
-- **GitHub**: [@shreekunal](https://github.com/shreekunal)
+- **Email**: [lavishnehra7@gmail.com](mailto:lavishnehra7@gmail.com)
+- **GitHub**: [@lavishnehra](https://github.com/LavishNehra)
 - **LinkedIn**: [Your LinkedIn Profile]
 
 ---

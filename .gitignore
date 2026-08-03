@@ -1,0 +1,6 @@
+/.idea/
+node_modules
+/BackEnd/node_modules
+/FrontEnd/node_modules
+/BackEnd/Database Data
+env.js

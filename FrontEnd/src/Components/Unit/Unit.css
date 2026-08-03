@@ -1,0 +1,1306 @@
+/* Reading-Focused Unit Design */
+
+/* Global Styles */
+.unit-reading-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  font-family: "Georgia", "Times New Roman", serif;
+  line-height: 1.8;
+  color: #2d3748;
+}
+
+/* Fixed Navigation Header */
+.unit-nav-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.nav-back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.nav-back-button:hover {
+  background: #5a67d8;
+  transform: translateY(-1px);
+}
+
+/* Center Section with Time and Timer */
+.nav-center-section {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex: 1;
+  justify-content: center;
+  margin-left: 110px !important;
+}
+
+.current-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+}
+
+.time-icon {
+  font-size: 16px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.time-display {
+  font-family: "Courier New", monospace;
+  letter-spacing: 0.5px;
+}
+
+.timer-section {
+  position: relative;
+}
+
+.active-timer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+}
+
+.timer-display {
+  font-family: "Courier New", monospace;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+.timer-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.timer-control-btn {
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.timer-control-btn:hover {
+  transform: translateY(-1px);
+}
+
+.start-btn {
+  color: #059669;
+  background: rgba(5, 150, 105, 0.1);
+}
+
+.start-btn:hover {
+  background: #059669;
+  color: white;
+}
+
+.stop-btn {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.stop-btn:hover {
+  background: #dc2626;
+  color: white;
+}
+
+.timer-input {
+  width: 45px;
+  padding: 4px 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 13px;
+  background: white;
+}
+
+.timer-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.timer-label {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.unit-progress {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.unit-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.unit-meta-icon {
+  color: #667eea;
+  font-size: 1.2rem;
+}
+
+.unit-title-nav {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d3748;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Main Layout */
+.reading-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 0;
+  padding-top: 70px;
+  min-height: calc(100vh - 70px);
+}
+
+/* Table of Contents Sidebar */
+.toc-sidebar {
+  background: #1a202c;
+  border-right: 1px solid #2d3748;
+  padding: 20px 0;
+  position: sticky;
+  top: 70px;
+  height: calc(100vh - 70px);
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.toc-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px 20px 20px;
+  border-bottom: 1px solid #2d3748;
+  margin-bottom: 20px;
+}
+
+.toc-header svg {
+  color: #e53e3e;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.header-text {
+  flex: 1;
+}
+
+.toc-header h3 {
+  margin: 0;
+  font-size: 19.5px !important;
+  padding: 0;
+  font-weight: 500;
+  color: #f7fafc;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.2;
+}
+
+.course-subtitle {
+  margin: 2px 0 0 0;
+  font-size: 0.8rem;
+  color: #a0aec0;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.toc-search {
+  padding: 0 20px 20px 20px;
+  border-bottom: 1px solid #2d3748;
+  margin-bottom: 20px;
+}
+
+.toc-search-input {
+  width: 100%;
+  background: #2d3748;
+  border: 1px solid #4a5568;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.toc-search-input::placeholder {
+  color: #718096;
+}
+
+.toc-search-input:focus {
+  border-color: #e53e3e;
+  background: #374151;
+}
+
+.toc-content {
+  padding: 0 12px;
+}
+
+.toc-unit {
+  margin-bottom: 8px;
+}
+
+.toc-unit-btn {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #e2e8f0;
+  border-left: 3px solid transparent;
+}
+
+.toc-unit-btn:hover {
+  background: #2d3748;
+  color: #f7fafc;
+}
+
+.toc-unit-btn.active {
+  background: #2d3748;
+  color: #f7fafc;
+  border-left-color: #e53e3e;
+}
+
+.unit-indicator {
+  display: flex;
+  align-items: center;
+  min-width: 60px;
+}
+
+.unit-number {
+  background: #4a5568;
+  color: #e2e8f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.toc-unit-btn.active .unit-number {
+  background: #e53e3e;
+  color: white;
+}
+
+.unit-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.unit-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  color: #a0aec0;
+}
+
+.toc-unit-btn:hover .unit-title,
+.toc-unit-btn.active .unit-title {
+  color: #f7fafc;
+}
+
+.toc-chapter {
+  margin-bottom: 4px;
+}
+
+.toc-chapter-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #e2e8f0;
+}
+
+.toc-chapter-btn:hover {
+  background: #2d3748;
+  color: #f7fafc;
+}
+
+.toc-chapter-btn.expanded {
+  background: #2d3748;
+  color: #f7fafc;
+}
+
+.toc-toggle {
+  color: #e53e3e;
+  font-size: 0.9rem;
+  min-width: 12px;
+}
+
+.toc-chapter-title {
+  color: #e2e8f0;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.toc-sections {
+  margin-left: 20px;
+  margin-top: 8px;
+  padding-left: 16px;
+  border-left: 2px solid #4a5568;
+}
+
+.toc-section-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  color: #a0aec0;
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  position: relative;
+}
+
+.toc-section-link:before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4a5568;
+  margin-right: 4px;
+}
+
+.toc-section-link:hover {
+  background: #2d3748;
+  color: #e2e8f0;
+}
+
+.toc-section-link:hover:before {
+  background: #e53e3e;
+}
+
+.toc-quiz {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #2d3748;
+}
+
+.toc-quiz-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: #68d391;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.toc-quiz-link:hover {
+  background: #2d3748;
+  color: #9ae6b4;
+}
+
+/* Main Reading Content */
+.reading-content {
+  width: 100%;
+  margin: 0;
+  padding: 40px 60px 100px 60px;
+  background: white;
+  min-height: calc(100vh - 70px);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
+}
+
+/* Unit Title Section */
+.unit-title-section {
+  margin-bottom: 50px;
+  padding-bottom: 30px;
+  border-bottom: 2px solid #e2e8f0;
+  text-align: center;
+}
+
+.unit-main-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 20px 0;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.unit-meta-info {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.chapter-count,
+.quiz-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #4a5568;
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.chapter-count svg,
+.quiz-count svg {
+  color: #667eea;
+}
+
+/* Reading Sections */
+.reading-sections {
+  margin-bottom: 60px;
+}
+
+.reading-chapter {
+  margin-bottom: 60px;
+}
+
+.chapter-title-section {
+  margin-bottom: 40px;
+}
+
+.chapter-title {
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+  line-height: 1.3;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chapter-number {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #667eea;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.chapter-reading-content {
+  padding-left: 0;
+}
+
+.reading-section {
+  margin-bottom: 50px;
+  scroll-margin-top: 100px;
+}
+
+.section-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.section-content {
+  margin-bottom: 30px;
+}
+
+.section-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #2d3748;
+  margin: 0 0 20px 0;
+  text-align: justify;
+}
+
+.reading-subsection {
+  margin: 30px 0;
+  padding: 25px;
+  background: #f8fafc;
+  border-left: 4px solid #667eea;
+  border-radius: 0 8px 8px 0;
+}
+
+.subsection-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0 0 15px 0;
+  line-height: 1.4;
+}
+
+.subsection-content {
+  margin: 0;
+}
+
+.subsection-text {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #4a5568;
+  margin: 0;
+  text-align: justify;
+}
+
+/* Quiz Section */
+.reading-quiz-section {
+  margin-top: 80px;
+  padding-top: 40px;
+  border-top: 3px solid #e2e8f0;
+  scroll-margin-top: 100px;
+}
+
+.quiz-title-section {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.quiz-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0 0 15px 0;
+}
+
+.quiz-title svg {
+  color: #48bb78;
+  font-size: 1.8rem;
+}
+
+.quiz-description {
+  font-size: 1.1rem;
+  color: #4a5568;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Quiz Start Card */
+.quiz-start-card {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(72, 187, 120, 0.3);
+}
+
+.quiz-info h3 {
+  font-size: 1.5rem;
+  margin: 0 0 15px 0;
+  font-weight: 600;
+}
+
+.quiz-info p {
+  font-size: 1.1rem;
+  margin: 0 0 25px 0;
+  opacity: 0.9;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.quiz-tips {
+  text-align: left;
+  max-width: 400px;
+  margin: 0 auto 30px auto;
+  padding: 0;
+  list-style: none;
+}
+
+.quiz-tips li {
+  padding: 8px 0;
+  font-size: 1rem;
+  opacity: 0.9;
+  position: relative;
+  padding-left: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.quiz-tips li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: white;
+  font-weight: bold;
+}
+
+.start-quiz-button {
+  background: white;
+  color: #48bb78;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 auto;
+  transition: all 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.start-quiz-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Quiz Content */
+.quiz-content {
+  background: #f8fafc;
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.quiz-progress {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.quiz-progress span {
+  color: #4a5568;
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.quiz-questions {
+  margin-bottom: 0;
+}
+
+/* Question Cards */
+.question-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.question-header {
+  margin-bottom: 20px;
+}
+
+.question-number {
+  display: inline-block;
+  background: #667eea;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.question-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.question-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 15px 18px;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.option-label:hover {
+  border-color: #667eea;
+  background: white;
+}
+
+.option-label input[type="radio"] {
+  margin: 0;
+  margin-top: 3px;
+  accent-color: #667eea;
+}
+
+.option-text {
+  color: #2d3748;
+  font-size: 1rem;
+  line-height: 1.6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Quiz Actions */
+.quiz-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.submit-quiz-btn,
+.retake-quiz-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.submit-quiz-btn:hover,
+.retake-quiz-btn:hover {
+  background: #5a67d8;
+  transform: translateY(-1px);
+}
+
+.submit-quiz-btn:disabled {
+  background: #a0aec0;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cancel-quiz-btn,
+.close-quiz-btn {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.cancel-quiz-btn:hover,
+.close-quiz-btn:hover {
+  background: #c53030;
+  transform: translateY(-1px);
+}
+
+/* Quiz Results */
+.quiz-results {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  border: 1px solid #e2e8f0;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.results-header h3 {
+  margin: 0;
+  color: #2d3748;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.score-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.score {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.percentage {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.results-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.result-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  border-left: 4px solid;
+}
+
+.result-item.correct {
+  border-left-color: #48bb78;
+  background: #f0fff4;
+}
+
+.result-item.incorrect {
+  border-left-color: #e53e3e;
+  background: #fff5f5;
+}
+
+.result-item h4 {
+  margin: 0 0 12px 0;
+  color: #2d3748;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.result-item p {
+  margin: 8px 0;
+  color: #4a5568;
+  font-size: 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Error State */
+.unit-error {
+  text-align: center;
+  padding: 100px 20px;
+  background: white;
+  min-height: calc(100vh - 70px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.unit-error h3 {
+  color: #e53e3e;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .reading-layout {
+    grid-template-columns: 220px 1fr;
+  }
+
+  .reading-content {
+    padding: 30px 40px 80px 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .reading-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .toc-sidebar {
+    display: none;
+  }
+
+  .reading-content {
+    padding: 25px 20px 60px 20px;
+  }
+
+  .unit-main-title {
+    font-size: 2.2rem;
+  }
+
+  .chapter-title {
+    font-size: 1.8rem;
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+  }
+
+  .unit-meta-info {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .quiz-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .results-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .unit-nav-header {
+    padding: 10px 15px;
+  }
+
+  .reading-content {
+    padding: 20px 15px 50px 15px;
+  }
+
+  .unit-main-title {
+    font-size: 1.8rem;
+  }
+
+  .quiz-start-card {
+    padding: 25px 20px;
+  }
+
+  .quiz-content {
+    padding: 20px;
+  }
+
+  .question-card {
+    padding: 20px;
+  }
+}
+
+.quiz-content {
+  padding: 0;
+  margin-top: 20px;
+}
+
+/* Question Cards */
+.question-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 25px;
+}
+
+.question-card h4 {
+  margin: 0 0 20px 0;
+  color: #2d3748;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.option-label:hover {
+  border-color: #667eea;
+  background: #f7fafc;
+}
+
+.option-label input[type="radio"] {
+  margin: 0;
+  accent-color: #667eea;
+}
+
+.option-text {
+  color: #2d3748;
+  font-weight: 500;
+}
+
+/* Quiz Actions */
+.quiz-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.submit-quiz-btn,
+.retake-quiz-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.submit-quiz-btn:hover,
+.retake-quiz-btn:hover {
+  background: #5a67d8;
+}
+
+.submit-quiz-btn:disabled {
+  background: #a0aec0;
+  cursor: not-allowed;
+}
+
+.cancel-quiz-btn,
+.close-quiz-btn {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.cancel-quiz-btn:hover,
+.close-quiz-btn:hover {
+  background: #c53030;
+}
+
+/* Quiz Results */
+.quiz-results {
+  background: #f7fafc;
+  border-radius: 12px;
+  padding: 25px;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.results-header h3 {
+  margin: 0;
+  color: #2d3748;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.score-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.score {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.percentage {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.results-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.result-item {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 15px;
+  border-left: 4px solid;
+}
+
+.result-item.correct {
+  border-left-color: #48bb78;
+  background: #f0fff4;
+}
+
+.result-item.incorrect {
+  border-left-color: #e53e3e;
+  background: #fff5f5;
+}
+
+.result-item h4 {
+  margin: 0 0 10px 0;
+  color: #2d3748;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.result-item p {
+  margin: 5px 0;
+  color: #4a5568;
+}
+
+/* Error State */
+.unit-error {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.unit-error h3 {
+  color: #e53e3e;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .unit-container {
+    padding: 15px;
+  }
+
+  .unit-title-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .unit-title-section h1 {
+    font-size: 2rem;
+  }
+
+  .section-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .quiz-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .results-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .score-display {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .chapter-header {
+    padding: 15px;
+  }
+
+  .chapter-content {
+    padding: 20px;
+  }
+
+  .section-card {
+    padding: 15px;
+  }
+
+  .quiz-content {
+    padding: 20px;
+  }
+
+  .question-card {
+    padding: 15px;
+  }
+}
